@@ -59,8 +59,8 @@ typedef VOID	pregs;
 #define AP_PROFILE_PATH                 "/ramdisk/etc/Wireless/RT2870AP/RT2770AP.dat"
 #define AP_RTMP_FIRMWARE_FILE_NAME "/ramdisk/etc/Wireless/RT2870AP/RT2770AP.bin"
 #else
-#define AP_PROFILE_PATH			"/etc/Wireless/RT2870AP/RT2770AP.dat"
-#define AP_RTMP_FIRMWARE_FILE_NAME "/etc/Wireless/RT2870AP/RT2770AP.bin"
+#define AP_PROFILE_PATH			"/etc/Wireless/RT2770AP.dat"
+#define AP_RTMP_FIRMWARE_FILE_NAME "/etc/Wireless/RT2770AP.bin"
 #endif
 #define AP_NIC_DEVICE_NAME			"RT2770AP"
 #define AP_DRIVER_VERSION			"2.3.0.0"

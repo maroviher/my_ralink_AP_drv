@@ -59,7 +59,7 @@ typedef VOID	pregs;
 #define AP_PROFILE_PATH                 "/ramdisk/etc/Wireless/RT5370AP/RT5370AP.dat"
 #define AP_RTMP_FIRMWARE_FILE_NAME "/ramdisk/etc/Wireless/RT5370AP/RT5370AP.bin"
 #else
-#define AP_PROFILE_PATH			"/etc/Wireless/RT2870AP/RT5370AP.dat"
+#define AP_PROFILE_PATH			"/etc/Wireless/RT5370AP.dat"
 #define AP_RTMP_FIRMWARE_FILE_NAME "/etc/Wireless/RT2870AP/RT5370AP.bin"
 #endif
 #define AP_NIC_DEVICE_NAME			"RT5370AP"

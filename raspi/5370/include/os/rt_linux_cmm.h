@@ -69,7 +69,7 @@ RTMP_DECLARE_DRV_OPS_FUNCTION(usb);
 #else
 
 #ifdef RTMP_MAC_USB
-#define RTMP_DRV_NAME	"rt5370"
+#define RTMP_DRV_NAME	"rt5370ap"
 #else
 #define RTMP_DRV_NAME	"rt5360"
 #endif /* RTMP_MAC_USB */
