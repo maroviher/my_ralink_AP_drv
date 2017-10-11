@@ -961,7 +961,6 @@ NTSTATUS    RTUSB_VendorRequest(
 			RTUSB_CONTROL_MSG(pObj->pUsb_Dev, 0, Request, RequestType, Value, Index, pAd->UsbVendorReqBuf, TransferBufferLength, CONTROL_TIMEOUT_JIFFIES, RET);
 
 			if (RET < 0) {
-				DBGPRINT(RT_DEBUG_OFF, ("#\n"));
 				if (RET == RTMP_USB_CONTROL_MSG_ENODEV)
 				{
 					RTMP_SET_FLAG(pAd, fRTMP_ADAPTER_NIC_NOT_EXIST);
