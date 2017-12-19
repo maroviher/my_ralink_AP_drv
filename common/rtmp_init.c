@@ -260,7 +260,7 @@ NDIS_STATUS	RTMPAllocAdapterBlock(
 #endif /* WORKQUEUE_BH */
 		}
 		pAd->BeaconBuf = pBeaconBuf;
-		DBGPRINT(RT_DEBUG_OFF, ("\n\n=== pAd = %p, size = %d ===\n\n", pAd, (UINT32)sizeof(RTMP_ADAPTER)));
+		DBGPRINT(RT_DEBUG_TRACE, ("\n\n=== pAd = %p, size = %d ===\n\n", pAd, (UINT32)sizeof(RTMP_ADAPTER)));
 
 		if (RtmpOsStatsAlloc(&pAd->stats, &pAd->iw_stats) == FALSE)
 		{
@@ -332,25 +332,25 @@ NDIS_STATUS	RTMPAllocAdapterBlock(
 	/*
 		Init ProbeRespIE Table
 	*/
-	for (index = 0; index < MAX_LEN_OF_BSS_TABLE; index++) 
+	for (index = 0; index < MAX_LEN_OF_BSS_TABLE; index++)
 	{
 		if (os_alloc_mem(pAd,&pAd->ProbeRespIE[index].pIe, MAX_VIE_LEN) == NDIS_STATUS_SUCCESS)
 			RTMPZeroMemory(pAd->ProbeRespIE[index].pIe, MAX_VIE_LEN);
 		else
 			pAd->ProbeRespIE[index].pIe = NULL;
-	}	
+	}
 
-	DBGPRINT_S(Status, ("<-- RTMPAllocAdapterBlock, Status=%x\n", Status));
+	DBGPRINT(RT_DEBUG_TRACE, ("<-- RTMPAllocAdapterBlock, Status=%x\n", Status));
 	return Status;
 }
 
 
 /*
 	========================================================================
-	
+
 	Routine Description:
 		Read initial Tx power per MCS and BW from EEPROM
-		
+
 	Arguments:
 		Adapter						Pointer to our adapter
 
@@ -360,7 +360,7 @@ NDIS_STATUS	RTMPAllocAdapterBlock(
 	IRQL = PASSIVE_LEVEL
 
 	Note:
-		
+
 	========================================================================
 */
 VOID	RTMPReadTxPwrPerRate(
@@ -372,7 +372,7 @@ VOID	RTMPReadTxPwrPerRate(
 	INT			Apwrdelta, Gpwrdelta;
 	UCHAR		t1,t2,t3,t4;
 	BOOLEAN		bApwrdeltaMinus = TRUE, bGpwrdeltaMinus = TRUE;
-	
+
 #ifdef RT3593
 	if (IS_RT3593(pAd))
 	{
@@ -380,10 +380,10 @@ VOID	RTMPReadTxPwrPerRate(
 	}
 	else
 #endif /* RT3593 */
-	{	
-		
+	{
+
 		/* Get power delta for 20MHz and 40MHz.*/
-		
+
 		DBGPRINT(RT_DEBUG_TRACE, ("Txpower per Rate\n"));
 		RT28xx_EEPROM_READ16(pAd, EEPROM_TXPOWER_DELTA, value2);
 		Apwrdelta = 0;
@@ -393,7 +393,7 @@ VOID	RTMPReadTxPwrPerRate(
 		{
 			if ((value2 & 0x80))
 				Gpwrdelta = (value2&0xf);
-			
+
 			if ((value2 & 0x40))
 				bGpwrdeltaMinus = FALSE;
 			else
@@ -408,12 +408,12 @@ VOID	RTMPReadTxPwrPerRate(
 				bApwrdeltaMinus = FALSE;
 			else
 				bApwrdeltaMinus = TRUE;
-		}	
+		}
 		DBGPRINT(RT_DEBUG_TRACE, ("Gpwrdelta = %x, Apwrdelta = %x .\n", Gpwrdelta, Apwrdelta));
 
-		
+
 		/* Get Txpower per MCS for 20MHz in 2.4G.*/
-		
+
 		for (i=0; i<5; i++)
 		{
 			RT28xx_EEPROM_READ16(pAd, EEPROM_TXPOWER_BYRATE_20MHZ_2_4G + i*4, value);
@@ -458,7 +458,7 @@ VOID	RTMPReadTxPwrPerRate(
 					t4 = value_4-(Apwrdelta);
 				else
 					t4 = 0;
-			}				
+			}
 			Adata = t1 + (t2<<4) + (t3<<8) + (t4<<12);
 			if (bGpwrdeltaMinus == FALSE)
 			{
@@ -493,9 +493,9 @@ VOID	RTMPReadTxPwrPerRate(
 					t4 = value_4-(Gpwrdelta);
 				else
 					t4 = 0;
-			}				
+			}
 			Gdata = t1 + (t2<<4) + (t3<<8) + (t4<<12);
-			
+
 			RT28xx_EEPROM_READ16(pAd, EEPROM_TXPOWER_BYRATE_20MHZ_2_4G + i*4 + 2, value);
 
 			/* use value_1 ~ value_4 for code size reduce */
@@ -537,7 +537,7 @@ VOID	RTMPReadTxPwrPerRate(
 					t4 = value_4-(Apwrdelta);
 				else
 					t4 = 0;
-			}				
+			}
 			Adata |= ((t1<<16) + (t2<<20) + (t3<<24) + (t4<<28));
 			if (bGpwrdeltaMinus == FALSE)
 			{
@@ -572,16 +572,16 @@ VOID	RTMPReadTxPwrPerRate(
 					t4 = value_4-(Gpwrdelta);
 				else
 					t4 = 0;
-			}				
+			}
 			Gdata |= ((t1<<16) + (t2<<20) + (t3<<24) + (t4<<28));
 			data |= (value<<16);
 
-			/* For 20M/40M Power Delta issue */		
+			/* For 20M/40M Power Delta issue */
 			pAd->Tx20MPwrCfgABand[i] = data;
 			pAd->Tx20MPwrCfgGBand[i] = data;
 			pAd->Tx40MPwrCfgABand[i] = Adata;
 			pAd->Tx40MPwrCfgGBand[i] = Gdata;
-			
+
 			if (data != 0xffffffff)
 				RTMP_IO_WRITE32(pAd, TX_PWR_CFG_0 + i*4, data);
 			DBGPRINT_RAW(RT_DEBUG_TRACE, ("20MHz BW, 2.4G band-%lx,  Adata = %lx,  Gdata = %lx \n", data, Adata, Gdata));
@@ -3561,7 +3561,7 @@ VOID	RTMP_TimerListAdd(
 	{
 		pObj->pRscObj = pRsc;
 		insertTailList(pRscList, (LIST_ENTRY *)pObj);
-		DBGPRINT(RT_DEBUG_ERROR, ("%s: add timer obj %lx!\n", __FUNCTION__, (ULONG)pRsc));
+		DBGPRINT(RT_DEBUG_TRACE, ("%s: add timer obj %lx!\n", __FUNCTION__, (ULONG)pRsc));
 	}
 }
 
@@ -3608,7 +3608,7 @@ VOID	RTMP_TimerListRelease(
 
 /*
 	========================================================================
-	
+
 	Routine Description:
 		Init timer objects
 
@@ -3622,7 +3622,7 @@ VOID	RTMP_TimerListRelease(
 		None
 
 	Note:
-		
+
 	========================================================================
 */
 VOID	RTMPInitTimer(
@@ -3636,19 +3636,19 @@ VOID	RTMPInitTimer(
 
 	RTMP_TimerListAdd(pAd, pTimer);
 
-	
+
 	/* Set Valid to TRUE for later used.*/
 	/* It will crash if we cancel a timer or set a timer */
 	/* that we haven't initialize before.*/
 	/* */
 	pTimer->Valid      = TRUE;
-	
+
 	pTimer->PeriodicType = Repeat;
 	pTimer->State      = FALSE;
 	pTimer->cookie = (ULONG) pData;
 	pTimer->pAd = pAd;
 
-	RTMP_OS_Init_Timer(pAd, &pTimer->TimerObj,	pTimerFunc, (PVOID) pTimer, &pAd->RscTimerMemList);	
+	RTMP_OS_Init_Timer(pAd, &pTimer->TimerObj,	pTimerFunc, (PVOID) pTimer, &pAd->RscTimerMemList);
 	DBGPRINT(RT_DEBUG_TRACE,("%s: %lx\n",__FUNCTION__, (ULONG)pTimer));
 
 	RTMP_SEM_UNLOCK(&TimerSemLock);
@@ -3657,7 +3657,7 @@ VOID	RTMPInitTimer(
 
 /*
 	========================================================================
-	
+
 	Routine Description:
 		Init timer objects
 
@@ -3670,7 +3670,7 @@ VOID	RTMPInitTimer(
 
 	Note:
 		To use this routine, must call RTMPInitTimer before.
-		
+
 	========================================================================
 */
 VOID	RTMPSetTimer(
@@ -3682,7 +3682,7 @@ VOID	RTMPSetTimer(
 	if (pTimer->Valid)
 	{
 		RTMP_ADAPTER *pAd;
-		
+
 		pAd = (RTMP_ADAPTER *)pTimer->pAd;
 		if (RTMP_TEST_FLAG(pAd, fRTMP_ADAPTER_HALT_IN_PROGRESS | fRTMP_ADAPTER_NIC_NOT_EXIST))
 		{
@@ -3690,7 +3690,7 @@ VOID	RTMPSetTimer(
 			RTMP_SEM_UNLOCK(&TimerSemLock);
 			return;
 		}
-		
+
 		pTimer->TimerValue = Value;
 		pTimer->State      = FALSE;
 		if (pTimer->PeriodicType == TRUE)
@@ -3716,7 +3716,7 @@ VOID	RTMPSetTimer(
 
 /*
 	========================================================================
-	
+
 	Routine Description:
 		Init timer objects
 
@@ -3729,7 +3729,7 @@ VOID	RTMPSetTimer(
 
 	Note:
 		To use this routine, must call RTMPInitTimer before.
-		
+
 	========================================================================
 */
 VOID	RTMPModTimer(
@@ -3768,7 +3768,7 @@ VOID	RTMPModTimer(
 
 /*
 	========================================================================
-	
+
 	Routine Description:
 		Cancel timer objects
 
@@ -3780,11 +3780,11 @@ VOID	RTMPModTimer(
 
 	IRQL = PASSIVE_LEVEL
 	IRQL = DISPATCH_LEVEL
-	
+
 	Note:
 		1.) To use this routine, must call RTMPInitTimer before.
 		2.) Reset NIC to initial state AS IS system boot up time.
-		
+
 	========================================================================
 */
 VOID	RTMPCancelTimer(
@@ -3797,9 +3797,9 @@ VOID	RTMPCancelTimer(
 	{
 		if (pTimer->State == FALSE)
 			pTimer->Repeat = FALSE;
-		
+
 		RTMP_OS_Del_Timer(&pTimer->TimerObj, pCancelled);
-		
+
 		if (*pCancelled == TRUE)
 			pTimer->State = TRUE;
 
@@ -3830,9 +3830,9 @@ VOID	RTMPReleaseTimer(
 	{
 		if (pTimer->State == FALSE)
 			pTimer->Repeat = FALSE;
-		
+
 		RTMP_OS_Del_Timer(&pTimer->TimerObj, pCancelled);
-		
+
 		if (*pCancelled == TRUE)
 			pTimer->State = TRUE;
 
@@ -3860,7 +3860,7 @@ VOID	RTMPReleaseTimer(
 
 /*
 	========================================================================
-	
+
 	Routine Description:
 		Enable RX 
 
@@ -3900,7 +3900,7 @@ VOID RTMPEnableRxTx(
 			if (pAd->ApCfg.IdsEnable)
 				rx_filter_flag &= (~0x4);	/* Don't drop those not-U2M frames*/
 		}
-#endif /* IDS_SUPPORT */			
+#endif /* IDS_SUPPORT */
 #endif /* CONFIG_AP_SUPPORT */
 
 		RTMP_IO_WRITE32(pAd, RX_FILTR_CFG, rx_filter_flag);     /* enable RX of DMA block*/
@@ -3912,16 +3912,16 @@ VOID RTMPEnableRxTx(
 		if (pAd->StaCfg.PSPXlink)
 			rx_filter_flag = PSPXLINK;
 		else
-#endif /* XLINK_SUPPORT */	
+#endif /* XLINK_SUPPORT */
 			rx_filter_flag = STANORMAL;     /* Staion not drop control frame will fail WiFi Certification.*/
 		RTMP_IO_WRITE32(pAd, RX_FILTR_CFG, rx_filter_flag);
 	}
 #endif /* CONFIG_STA_SUPPORT */
-	
+
 	{
 	RTMP_IO_WRITE32(pAd, MAC_SYS_CTRL, 0xc);
 	}
-	DBGPRINT(RT_DEBUG_TRACE, ("<== RTMPEnableRxTx\n"));	
+	DBGPRINT(RT_DEBUG_TRACE, ("<== RTMPEnableRxTx\n"));
 }
 
 
@@ -3937,7 +3937,7 @@ static INT RtmpChipOpsRegister(
 {
 	RTMP_CHIP_OP	*pChipOps = &pAd->chipOps;
 	int status;
-	
+
 	memset(pChipOps, 0, sizeof(RTMP_CHIP_OP));
 
 	RtmpChipOpsHook(pAd);
@@ -4041,7 +4041,7 @@ BOOLEAN RtmpRaDevCtrlExit(IN VOID *pAdSrc)
 {
 	PRTMP_ADAPTER	pAd = (PRTMP_ADAPTER)pAdSrc;
 	INT index;
-	
+
 #ifdef MULTIPLE_CARD_SUPPORT
 extern UINT8  MC_CardUsed[MAX_NUM_OF_MULTIPLE_CARD];
 
@@ -4068,7 +4068,7 @@ extern UINT8  MC_CardUsed[MAX_NUM_OF_MULTIPLE_CARD];
 	/*
 		Free ProbeRespIE Table
 	*/
-	for (index = 0; index < MAX_LEN_OF_BSS_TABLE; index++) 
+	for (index = 0; index < MAX_LEN_OF_BSS_TABLE; index++)
 	{
 		if (pAd->ProbeRespIE[index].pIe)
 			os_free_mem(pAd, pAd->ProbeRespIE[index].pIe);
@@ -4147,21 +4147,19 @@ VOID RTMP_BBP_IO_WRITE8(
 VOID AntCfgInit(
 IN  PRTMP_ADAPTER   pAd)
 {
-
-	
 #ifdef TXRX_SW_ANTDIV_SUPPORT
 	/* EEPROM 0x34[15:12] = 0xF is invalid, 0x2~0x3 is TX/RX SW AntDiv */
 	DBGPRINT(RT_DEBUG_OFF, ("%s: bTxRxSwAntDiv %d\n", __FUNCTION__, pAd->chipCap.bTxRxSwAntDiv));
-	if (pAd->chipCap.bTxRxSwAntDiv)  
-	{																	  
-		DBGPRINT(RT_DEBUG_OFF, ("\x1b[mAntenna word %X/%d, AntDiv %d\x1b[m\n", 
+	if (pAd->chipCap.bTxRxSwAntDiv)
+	{
+		DBGPRINT(RT_DEBUG_OFF, ("\x1b[mAntenna word %X/%d, AntDiv %d\x1b[m\n",
 					pAd->Antenna.word, pAd->Antenna.field.BoardType, pAd->NicConfig2.field.AntDiversity));
 	}
 #endif /* TXRX_SW_ANTDIV_SUPPORT */
 
 	{
 		if (pAd->NicConfig2.field.AntOpt== 1) /* ant selected by efuse */
-		{	
+		{
 			if (pAd->NicConfig2.field.AntDiversity == 0) /* main */
 			{
 				pAd->RxAnt.Pair1PrimaryRxAnt = 0;
@@ -4185,7 +4183,7 @@ IN  PRTMP_ADAPTER   pAd)
 		}
 	}
 
-	DBGPRINT(RT_DEBUG_OFF, ("\x1b[m%s: primary/secondary ant %d/%d\n\x1b[m", 
+	DBGPRINT(RT_DEBUG_TRACE, ("\x1b[m%s: primary/secondary ant %d/%d\n\x1b[m",
 					__FUNCTION__,
 					pAd->RxAnt.Pair1PrimaryRxAnt,
 					pAd->RxAnt.Pair1SecondaryRxAnt));

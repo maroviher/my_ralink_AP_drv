@@ -509,10 +509,10 @@ err:
 		os_free_mem(pAd, pAd->MgmtDescRing.AllocVa);
 		pAd->MgmtDescRing.AllocVa = NULL;
 	}
-	
+
 	/* Here we didn't have any pre-allocated memory need to free.*/
-	
-	return Status;	
+
+	return Status;
 }
 
 
@@ -534,7 +534,7 @@ Note:
 */
 NDIS_STATUS	RTMPAllocTxRxRingMemory(
 	IN	PRTMP_ADAPTER	pAd)
-{	
+{
 	NDIS_STATUS Status = NDIS_STATUS_FAILURE;
 	PTX_CONTEXT pNullContext   = &(pAd->NullContext);
 	PTX_CONTEXT pPsPollContext = &(pAd->PsPollContext);
@@ -627,7 +627,6 @@ NDIS_STATUS	RTMPAllocTxRxRingMemory(
 												"RxContext");
 			if (Status != NDIS_STATUS_SUCCESS)
 				goto err;
-		
 		}
 
 		NdisZeroMemory(&pAd->FragFrame, sizeof(FRAGMENT_FRAME));
@@ -638,14 +637,14 @@ NDIS_STATUS	RTMPAllocTxRxRingMemory(
 			Status = NDIS_STATUS_RESOURCES;
 		}
 	} while (FALSE);
-	
-	DBGPRINT_S(Status, ("<-- RTMPAllocTxRxRingMemory, Status=%x\n", Status));
+
+	DBGPRINT(RT_DEBUG_TRACE, ("<-- RTMPAllocTxRxRingMemory, Status=%x\n", Status));
 	return Status;
 
 err:
 	Status = NDIS_STATUS_RESOURCES;
 	RTMPFreeTxRxRingMemory(pAd);
-	
+
 	return Status;
 }
 
@@ -657,12 +656,12 @@ NDIS_STATUS RTMPInitTxRxRingMemory
 	NDIS_STATUS		Status;
 
 	/* Init the CmdQ and CmdQLock*/
-	NdisAllocateSpinLock(pAd, &pAd->CmdQLock);	
+	NdisAllocateSpinLock(pAd, &pAd->CmdQLock);
 	NdisAcquireSpinLock(&pAd->CmdQLock);
 	RTInitializeCmdQ(&pAd->CmdQ);
 	NdisReleaseSpinLock(&pAd->CmdQLock);
 
-	
+
 	NdisAllocateSpinLock(pAd, &pAd->MLMEBulkOutLock);
 	NdisAllocateSpinLock(pAd, &pAd->BulkInLock);
 	for(num =0 ; num < 6; num++)
@@ -1041,14 +1040,12 @@ NDIS_STATUS	RTMPAllocTxRxRingMemory(
 	NDIS_STATUS		Status = NDIS_STATUS_SUCCESS;
 	INT				num;
 
-	
 	DBGPRINT(RT_DEBUG_TRACE, ("--> RTMPAllocTxRxRingMemory\n"));
-
 
 	do
 	{
 		/* Init the CmdQ and CmdQLock*/
-		NdisAllocateSpinLock(pAd, &pAd->CmdQLock);	
+		NdisAllocateSpinLock(pAd, &pAd->CmdQLock);
 		NdisAcquireSpinLock(&pAd->CmdQLock);
 		RTInitializeCmdQ(&pAd->CmdQ);
 		NdisReleaseSpinLock(&pAd->CmdQLock);
@@ -1065,19 +1062,14 @@ NDIS_STATUS	RTMPAllocTxRxRingMemory(
 		{
 			NdisAllocateSpinLock(pAd, &pAd->TxContextQueueLock[num]);
 		}
-		
 
-
-		
 		/* Init send data structures and related parameters*/
-		
 		Status = NICInitTransmit(pAd);
 		if (Status != NDIS_STATUS_SUCCESS)
 			break;
 
-		
+
 		/* Init receive data structures and related parameters*/
-		
 		Status = NICInitRecv(pAd);
 		if (Status != NDIS_STATUS_SUCCESS)
 			break;
@@ -1090,8 +1082,8 @@ NDIS_STATUS	RTMPAllocTxRxRingMemory(
 			Status = NDIS_STATUS_RESOURCES;
 		}
 	} while (FALSE);
-	
-	DBGPRINT_S(Status, ("<-- RTMPAllocTxRxRingMemory, Status=%x\n", Status));
+
+	DBGPRINT(RT_DEBUG_TRACE, ("<-- RTMPAllocTxRxRingMemory, Status=%x\n", Status));
 	return Status;
 }
 

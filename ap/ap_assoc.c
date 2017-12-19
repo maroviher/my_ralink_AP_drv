@@ -906,8 +906,7 @@ VOID APMlmeKickOutSta(
 
 	if (ApIdx >= pAd->ApCfg.BssidNum)
 	{
-		DBGPRINT(RT_DEBUG_ERROR, ("%s: Invalid Apidx=%d\n",
-			__FUNCTION__, ApIdx));
+		DBGPRINT(RT_DEBUG_ERROR, ("%s: Invalid Apidx=%d\n", __FUNCTION__, ApIdx));
 		return;
 	}
 
@@ -915,23 +914,23 @@ VOID APMlmeKickOutSta(
 	{
 		/* send wireless event - for disassocation */
 		RTMPSendWirelessEvent(pAd, IW_DISASSOC_EVENT_FLAG, pStaAddr, 0, 0);
-        ApLogEvent(pAd, pStaAddr, EVENT_DISASSOCIATED);
+		ApLogEvent(pAd, pStaAddr, EVENT_DISASSOCIATED);
 
-	    /* 2. send out a DISASSOC request frame */
-	    NStatus = MlmeAllocateMemory(pAd, &pOutBuffer);
-	    if (NStatus != NDIS_STATUS_SUCCESS)
-	        return;
-	    
-	    DBGPRINT(RT_DEBUG_TRACE, ("ASSOC - MLME disassociates %02x:%02x:%02x:%02x:%02x:%02x; Send DISASSOC request\n",
+		/* 2. send out a DISASSOC request frame */
+		NStatus = MlmeAllocateMemory(pAd, &pOutBuffer);
+		if (NStatus != NDIS_STATUS_SUCCESS)
+	        	return;
+
+		DBGPRINT(RT_DEBUG_TRACE, ("ASSOC - MLME disassociates %02x:%02x:%02x:%02x:%02x:%02x; Send DISASSOC request\n",
 	        pStaAddr[0],pStaAddr[1],pStaAddr[2], pStaAddr[3],pStaAddr[4],pStaAddr[5]));
-	    MgtMacHeaderInit(pAd, &DisassocHdr, SUBTYPE_DISASSOC, 0, pStaAddr, 
+		MgtMacHeaderInit(pAd, &DisassocHdr, SUBTYPE_DISASSOC, 0, pStaAddr,
 							pAd->ApCfg.MBSSID[ApIdx].Bssid);
-	    MakeOutgoingFrame(pOutBuffer,            &FrameLen,
+		MakeOutgoingFrame(pOutBuffer,            &FrameLen,
 	                      sizeof(HEADER_802_11), &DisassocHdr,
 	                      2,                     &Reason,
 	                      END_OF_ARGS);
-	    MiniportMMRequest(pAd, 0, pOutBuffer, FrameLen);
-	    MlmeFreeMemory(pAd, pOutBuffer);
+		MiniportMMRequest(pAd, 0, pOutBuffer, FrameLen);
+		MlmeFreeMemory(pAd, pOutBuffer);
 		MacTableDeleteEntry(pAd, Aid, pStaAddr);
     }
 }
@@ -989,12 +988,12 @@ VOID APCls3errAction(
         /*ApLogEvent(pAd, pAddr, EVENT_DISASSOCIATED); */
 		MacTableDeleteEntry(pAd, pEntry->Aid, pHeader->Addr2);
     }
-    
+
     /* 2. send out a DISASSOC request frame */
     NStatus = MlmeAllocateMemory(pAd, &pOutBuffer);
     if (NStatus != NDIS_STATUS_SUCCESS)
         return;
-    
+
     DBGPRINT(RT_DEBUG_TRACE, ("ASSOC - Class 3 Error, Send DISASSOC frame to %02x:%02x:%02x:%02x:%02x:%02x\n",
     		PRINT_MAC(pHeader->Addr2)));
     MgtMacHeaderInit(pAd, &DisassocHdr, SUBTYPE_DISASSOC, 0, pHeader->Addr2, 
@@ -1006,7 +1005,7 @@ VOID APCls3errAction(
     MiniportMMRequest(pAd, 0, pOutBuffer, FrameLen);
     MlmeFreeMemory(pAd, pOutBuffer);
 }
- 
+
 /*
     ==========================================================================
     Description:
@@ -1085,7 +1084,6 @@ USHORT APBuildAssociation(
         *pAid = pEntry->Aid;
 		pEntry->NoDataIdleCount = 0;
 		pEntry->StaConnectTime = 0;
-        
 		{
 			/* check the validity of the received RSNIE */
 			if ((StatusCode = APValidateRSNIE(pAd, pEntry, RSN, *pRSNLen)) != MLME_SUCCESS)
@@ -1148,21 +1146,21 @@ USHORT APBuildAssociation(
 				pEntry->PrivacyFilter = Ndis802_11PrivFilter8021xWEP;
 				pEntry->WpaState = AS_INITPSK;
 			}
-#ifdef DOT1X_SUPPORT			
+#ifdef DOT1X_SUPPORT
 			else if ((pEntry->AuthMode == Ndis802_11AuthModeWPA) || (pEntry->AuthMode == Ndis802_11AuthModeWPA2)
 					|| (pAd->ApCfg.MBSSID[pEntry->apidx].IEEE8021X == TRUE))
 			{
 				pEntry->PrivacyFilter = Ndis802_11PrivFilter8021xWEP;
 				pEntry->WpaState = AS_AUTHENTICATION;
 			}
-#endif /* DOT1X_SUPPORT */			
-            
+#endif /* DOT1X_SUPPORT */
+
 			/*if (ClientRalinkIe & 0x00000004) */
 			if (ClientRalinkIe != 0x0)
 				CLIENT_STATUS_SET_FLAG(pEntry, fCLIENT_STATUS_RALINK_CHIPSET);
 			else
 				CLIENT_STATUS_CLEAR_FLAG(pEntry, fCLIENT_STATUS_RALINK_CHIPSET);
-			
+
 
 			/* Ralink proprietary Piggyback and Aggregation support for legacy RT61 chip */
 			CLIENT_STATUS_CLEAR_FLAG(pEntry, fCLIENT_STATUS_AGGREGATION_CAPABLE);
@@ -1193,16 +1191,16 @@ USHORT APBuildAssociation(
 				pEntry->PortSecured = WPA_802_1X_PORT_SECURED;
 
 #ifdef SOFT_ENCRYPT
-			/* There are some situation to need to encryption by software 			   	
+			/* There are some situation to need to encryption by software
 			   1. The Client support PMF. It shall ony support AES cipher.
 			   2. The Client support WAPI.
-			   If use RT3883 or later, HW can handle the above.	
+			   If use RT3883 or later, HW can handle the above.
 			   */
 
 #endif /* SOFT_ENCRYPT */
 
 #ifdef DOT11_N_SUPPORT
-			/* 	
+			/*
 				WFA recommend to restrict the encryption type in 11n-HT mode.
 			 	So, the WEP and TKIP are not allowed in HT rate.
 			*/
@@ -1270,7 +1268,6 @@ USHORT APBuildAssociation(
 					pEntry->MaxHTPhyMode.field.ShortGI = ((pAd->CommonCfg.DesiredHtPhy.ShortGIfor20)&(pHtCapability->HtCapInfo.ShortGIfor20));
 					pAd->MacTab.fAnyStation20Only = TRUE;
 				}
-				
 
 				/* find max fixed rate */
 /*				for (i=15; i>=0; i--) */
@@ -1373,7 +1370,7 @@ USHORT APBuildAssociation(
 			if (pAd->ApCfg.MBSSID[pEntry->apidx].bAutoTxRateSwitch == TRUE)
 			{
 				UCHAR TableSize = 0;
-				
+
 				MlmeSelectTxRateTable(pAd, pEntry, &pEntry->pTable, &TableSize, &pEntry->CurrTxRateIndex);
 				MlmeNewTxRate(pAd, pEntry);
 
@@ -1392,7 +1389,7 @@ USHORT APBuildAssociation(
 				/*pEntry->HTPhyMode.field.MODE	= pAd->ApCfg.MBSSID[pEntry->apidx].HTPhyMode.field.MODE; */
 				pEntry->HTPhyMode.field.MCS	= pAd->ApCfg.MBSSID[pEntry->apidx].HTPhyMode.field.MCS;
 				pEntry->bAutoTxRateSwitch = FALSE;
-				
+
 				/* If the legacy mode is set, overwrite the transmit setting of this entry. */
 				RTMPUpdateLegacyTxSetting((UCHAR)pAd->ApCfg.MBSSID[pEntry->apidx].DesiredTransmitSetting.field.FixedTxMode, pEntry);
 
@@ -1402,14 +1399,14 @@ USHORT APBuildAssociation(
 
 			if (pEntry->AuthMode < Ndis802_11AuthModeWPA)
 				ApLogEvent(pAd, pEntry->Addr, EVENT_ASSOCIATED);
-			
+
 			APUpdateCapabilityAndErpIe(pAd);
 #ifdef DOT11_N_SUPPORT
 			APUpdateOperationMode(pAd);
 #endif /* DOT11_N_SUPPORT */
-	   
+
 			pEntry->ReTryCounter = PEER_MSG1_RETRY_TIMER_CTR;
-			
+
 			StatusCode = MLME_SUCCESS;
 
 #ifdef HOSTAPD_SUPPORT
@@ -1457,7 +1454,7 @@ static void ap_assoc_info_debugshow(
 
 	DBGPRINT(RT_DEBUG_TRACE, ("%s - \n\tAssign AID=%d to STA %02x:%02x:%02x:%02x:%02x:%02x\n",
 		sAssoc, pEntry->Aid, PRINT_MAC(pEntry->Addr)));
-		
+
 	/*DBGPRINT(RT_DEBUG_TRACE, (HTCapability_Len ? "%s - 11n HT STA\n" : "%s - legacy STA\n", sAssoc)); */
 #ifdef DOT11_N_SUPPORT
 	if (HTCapability_Len && (pAd->CommonCfg.PhyMode >= PHY_11ABGN_MIXED))
@@ -1496,5 +1493,3 @@ static void ap_assoc_info_debugshow(
 		pEntry->StaIdleTimeout));
 
 }
-
-

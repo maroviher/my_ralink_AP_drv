@@ -114,7 +114,7 @@ RTMP_BUILD_DRV_OPS_FUNCTION_BODY
 
 int rt28xx_init(
 	IN VOID		*pAdSrc,
-	IN PSTRING	pDefaultMac, 
+	IN PSTRING	pDefaultMac,
 	IN PSTRING	pHostName)
 {
 	PRTMP_ADAPTER pAd = (PRTMP_ADAPTER)pAdSrc;
@@ -133,7 +133,7 @@ int rt28xx_init(
 		OSCCTL_STRUC osCtrl = {.word = 0};
 		CMB_CTRL_STRUC cmbCtrl = {.word = 0};
 		WLAN_FUN_CTRL_STRUC WlanFunCtrl = {.word = 0};
-			
+
 		RTMPEnableWlan(pAd, TRUE, TRUE);
 
 		//
@@ -146,13 +146,13 @@ int rt28xx_init(
 			WlanFunCtrl.field.PCIE_APP0_CLK_REQ = TRUE;
 			RTMP_IO_WRITE32(pAd, WLAN_FUN_CTRL, WlanFunCtrl.word);
 		}
-			
+
 		//Enable ROSC_EN first then CAL_REQ
 		RTMP_IO_READ32(pAd, OSCCTL, &osCtrl.word);
-		osCtrl.field.ROSC_EN = TRUE; //HW force 
-		RTMP_IO_WRITE32(pAd, OSCCTL, osCtrl.word);	
-		
-		osCtrl.field.ROSC_EN = TRUE; //HW force 
+		osCtrl.field.ROSC_EN = TRUE; //HW force
+		RTMP_IO_WRITE32(pAd, OSCCTL, osCtrl.word);
+
+		osCtrl.field.ROSC_EN = TRUE; //HW force
 		osCtrl.field.CAL_REQ = TRUE;
 		osCtrl.field.REF_CYCLE = 0x27;
 		RTMP_IO_WRITE32(pAd, OSCCTL, osCtrl.word);
@@ -171,7 +171,7 @@ int rt28xx_init(
 	{
 		PLL_CTRL_STRUC PllCtrl;
 		RTMP_IO_READ32(pAd, PLL_CTRL, &PllCtrl.word);
-		PllCtrl.field.VCO_FIXED_CURRENT_CONTROL = 0x1;			
+		PllCtrl.field.VCO_FIXED_CURRENT_CONTROL = 0x1;
 		RTMP_IO_WRITE32(pAd, PLL_CTRL, PllCtrl.word);
 	}
 #endif /* RT3290 */
@@ -199,7 +199,7 @@ int rt28xx_init(
 	RTMP_CLEAR_FLAGS(pAd);
 
 	/* Init BssTab & ChannelInfo tabbles for auto channel select.*/
-#ifdef CONFIG_AP_SUPPORT	
+#ifdef CONFIG_AP_SUPPORT
 	IF_DEV_CONFIG_OPMODE_ON_AP(pAd)
 	{
 /*#ifdef AUTO_CH_SELECT_ENHANCE*/
@@ -211,7 +211,7 @@ int rt28xx_init(
 
 #ifdef DOT11_N_SUPPORT
 	/* Allocate BA Reordering memory*/
-	if (ba_reordering_resource_init(pAd, MAX_REORDERING_MPDU_NUM) != TRUE)		
+	if (ba_reordering_resource_init(pAd, MAX_REORDERING_MPDU_NUM) != TRUE)
 		goto err1;
 #endif /* DOT11_N_SUPPORT */
 
@@ -221,7 +221,6 @@ int rt28xx_init(
 		goto err1;
 
 	DBGPRINT(RT_DEBUG_TRACE, ("MAC[Ver:Rev=0x%08x]\n", pAd->MACVersion));
-		
 
 	if (MAX_LEN_OF_MAC_TABLE > MAX_AVAILABLE_CLIENT_WCID(pAd))
 	{
@@ -262,7 +261,7 @@ int rt28xx_init(
 	RTMP_SET_FLAG(pAd, fRTMP_ADAPTER_INTERRUPT_IN_USE);
 
 	/* initialize MLME*/
-	
+
 	Status = RtmpMgmtTaskInit(pAd);
 	if (Status != NDIS_STATUS_SUCCESS)
 		goto err3;
@@ -281,7 +280,7 @@ int rt28xx_init(
 #endif /* RMTP_RBUS_SUPPORT */
 
 	/* Initialize pAd->StaCfg, pAd->ApCfg, pAd->CommonCfg to manufacture default*/
-	
+
 	UserCfgInit(pAd);
 
 
@@ -295,10 +294,9 @@ int rt28xx_init(
 	CfgInitHook(pAd);
 
 #ifdef CONFIG_AP_SUPPORT
-	if ((pAd->OpMode == OPMODE_AP)
-		)
+	if (pAd->OpMode == OPMODE_AP)
 		APInitialize(pAd);
-#endif /* CONFIG_AP_SUPPORT */	
+#endif /* CONFIG_AP_SUPPORT */
 
 #ifdef BLOCK_NET_IF
 	initblockQueueTab(pAd);
@@ -308,25 +306,25 @@ int rt28xx_init(
 	if (Status != NDIS_STATUS_SUCCESS)
 	{
 		DBGPRINT_ERR(("MeasureReqTabInit failed, Status[=0x%08x]\n",Status));
-		goto err6;	
+		goto err6;
 	}
 	Status = TpcReqTabInit(pAd);
 	if (Status != NDIS_STATUS_SUCCESS)
 	{
 		DBGPRINT_ERR(("TpcReqTabInit failed, Status[=0x%08x]\n",Status));
-		goto err6;	
+		goto err6;
 	}
 
-	
+
 	/* Init the hardware, we need to init asic before read registry, otherwise mac register will be reset*/
-	
+
 	Status = NICInitializeAdapter(pAd, TRUE);
 	if (Status != NDIS_STATUS_SUCCESS)
 	{
 		DBGPRINT_ERR(("NICInitializeAdapter failed, Status[=0x%08x]\n", Status));
 		if (Status != NDIS_STATUS_SUCCESS)
 		goto err6;
-	}	
+	}
 
 #ifdef CONFIG_AP_SUPPORT
 	IF_DEV_CONFIG_OPMODE_ON_AP(pAd)
@@ -345,7 +343,7 @@ int rt28xx_init(
 #endif /* CREDENTIAL_STORE */
 #endif /* CONFIG_STA_SUPPORT */
 
-	DBGPRINT(RT_DEBUG_OFF, ("1. Phy Mode = %d\n", pAd->CommonCfg.PhyMode));
+	DBGPRINT(RT_DEBUG_TRACE, ("1. Phy Mode = %d\n", pAd->CommonCfg.PhyMode));
 	if (Status != NDIS_STATUS_SUCCESS)
 	{
 		DBGPRINT_ERR(("RTMPReadParametersHook failed, Status[=0x%08x]\n",Status));
@@ -381,18 +379,18 @@ int rt28xx_init(
 	/* if (Status != NDIS_STATUS_SUCCESS)*/
 	/*    break;*/
 
-	DBGPRINT(RT_DEBUG_OFF, ("2. Phy Mode = %d\n", pAd->CommonCfg.PhyMode));
+	DBGPRINT(RT_DEBUG_TRACE, ("2. Phy Mode = %d\n", pAd->CommonCfg.PhyMode));
 
 	/* We should read EEPROM for all cases.  rt2860b*/
-	NICReadEEPROMParameters(pAd, (PSTRING)pDefaultMac);	
+	NICReadEEPROMParameters(pAd, (PSTRING)pDefaultMac);
 #ifdef CONFIG_STA_SUPPORT
 #endif /* CONFIG_STA_SUPPORT */
 
-	DBGPRINT(RT_DEBUG_OFF, ("3. Phy Mode = %d\n", pAd->CommonCfg.PhyMode));
+	DBGPRINT(RT_DEBUG_TRACE, ("3. Phy Mode = %d\n", pAd->CommonCfg.PhyMode));
 
 #ifdef LED_CONTROL_SUPPORT
 	/* Send LED Setting to MCU */
-	RTMPInitLEDMode(pAd);	
+	RTMPInitLEDMode(pAd);
 #endif /* LED_CONTROL_SUPPORT */
 
 	NICInitAsicFromEEPROM(pAd); /* rt2860b */
@@ -402,7 +400,7 @@ int rt28xx_init(
 #ifdef CONFIG_STA_SUPPORT
 	/* Initialize the frequency calibration*/
 	if (pAd->chipCap.FreqCalibrationSupport)
-		FrequencyCalibration(pAd);	
+		FrequencyCalibration(pAd);
 #endif /* CONFIG_STA_SUPPORT */
 #endif /* RTMP_FREQ_CALIBRATION_SUPPORT */
 
@@ -413,7 +411,7 @@ int rt28xx_init(
 
 #ifdef RTMP_TEMPERATURE_COMPENSATION
 	/* Temperature compensation, initialize the lookup table */
-	DBGPRINT(RT_DEBUG_OFF, ("bAutoTxAgcG = %d\n", pAd->bAutoTxAgcG));
+	DBGPRINT(RT_DEBUG_TRACE, ("bAutoTxAgcG = %d\n", pAd->bAutoTxAgcG));
 
 	if (pAd->chipCap.bTempCompTxALC && pAd->bAutoTxAgcG)
 		InitLookupTable(pAd);

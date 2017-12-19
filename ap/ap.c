@@ -34,7 +34,7 @@ char const *pEventText[EVENT_MAX_EVENT_TYPE] = {
 	"restart access point",
 	"successfully associated",
 	"has disassociated",
-	"has been aged-out and disassociated" ,    
+	"has been aged-out and disassociated",
 	"active countermeasures",
 	"has disassociated with invalid PSK password"};
 
@@ -49,14 +49,14 @@ NDIS_STATUS APInitialize(
 	IN  PRTMP_ADAPTER   pAd)
 {
 	NDIS_STATUS     Status = NDIS_STATUS_SUCCESS;
-	INT				i;			
+	INT				i;
 
 	DBGPRINT(RT_DEBUG_TRACE, ("---> APInitialize\n"));
 
 	/* Init Group key update timer, and countermeasures timer */
 	for (i = 0; i < MAX_MBSSID_NUM(pAd); i++)
-		RTMPInitTimer(pAd, &pAd->ApCfg.MBSSID[i].REKEYTimer, GET_TIMER_FUNCTION(GREKEYPeriodicExec), pAd,  TRUE); 
-	
+		RTMPInitTimer(pAd, &pAd->ApCfg.MBSSID[i].REKEYTimer, GET_TIMER_FUNCTION(GREKEYPeriodicExec), pAd,  TRUE);
+
 	RTMPInitTimer(pAd, &pAd->ApCfg.CounterMeasureTimer, GET_TIMER_FUNCTION(CMTimerExec), pAd, FALSE);
 #ifdef RTMP_MAC_USB
 	RTMPInitTimer(pAd, &pAd->CommonCfg.BeaconUpdateTimer, GET_TIMER_FUNCTION(BeaconUpdateExec), pAd, TRUE);
@@ -1067,7 +1067,7 @@ VOID MacTableMaintenance(
 				{
 					/* use Null or QoS Null to detect the ACTIVE station */
 					BOOLEAN bQosNull = FALSE;
-	
+
 					if (CLIENT_STATUS_TEST_FLAG(pEntry, fCLIENT_STATUS_WMM_CAPABLE))
 						bQosNull = TRUE;
 
@@ -1477,10 +1477,24 @@ VOID ApLogEvent(
 		RTMP_GetCurrentSystemTime(&pLog->SystemTime);
 		COPY_MAC_ADDR(pLog->Addr, pAddr);
 		pLog->Event = Event;
-		DBGPRINT_RAW(RT_DEBUG_TRACE,("LOG#%ld %02x:%02x:%02x:%02x:%02x:%02x %s\n",
-			pAd->EventTab.Num, pAddr[0], pAddr[1], pAddr[2], 
+
+		static const char* str_event[]={
+			[EVENT_RESET_ACCESS_POINT]="EVENT_RESET_ACCESS_POINT",
+			[EVENT_ASSOCIATED]="EVENT_ASSOCIATED",
+			[EVENT_DISASSOCIATED]="EVENT_DISASSOCIATED",
+			[EVENT_AGED_OUT]="EVENT_AGED_OUT",
+			[EVENT_COUNTER_M]="EVENT_COUNTER_M",
+			[EVENT_INVALID_PSK]="EVENT_INVALID_PSK",
+			[EVENT_MAX_EVENT_TYPE]="EVENT_MAX_EVENT_TYPE"
+		};
+		DBGPRINT_RAW(RT_DEBUG_OFF,("%s %02x:%02x:%02x:%02x:%02x:%02x %s\n",
+			str_event[Event], pAddr[0], pAddr[1], pAddr[2], 
 			pAddr[3], pAddr[4], pAddr[5], pEventText[Event]));
 		pAd->EventTab.Num += 1;
+	}
+	else
+	{
+		DBGPRINT_RAW(RT_DEBUG_OFF, ("pAd->EventTab.Num < MAX_NUM_OF_EVENT"));
 	}
 }
 #endif /* SYSTEM_LOG_SUPPORT */

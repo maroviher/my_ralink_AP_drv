@@ -158,7 +158,7 @@ NTSTATUS	RTUSBVenderReset(
 	IN	PRTMP_ADAPTER	pAd)
 {
 	NTSTATUS	Status;
-	DBGPRINT_RAW(RT_DEBUG_ERROR, ("-->RTUSBVenderReset\n"));
+	DBGPRINT_RAW(RT_DEBUG_TRACE, ("-->RTUSBVenderReset\n"));
 	Status = RTUSB_VendorRequest(
 		pAd,
 		USBD_TRANSFER_DIRECTION_OUT,
@@ -169,7 +169,7 @@ NTSTATUS	RTUSBVenderReset(
 		NULL,
 		0);
 
-	DBGPRINT_RAW(RT_DEBUG_ERROR, ("<--RTUSBVenderReset\n"));
+	DBGPRINT_RAW(RT_DEBUG_TRACE, ("<--RTUSBVenderReset\n"));
 	return Status;
 }
 /*

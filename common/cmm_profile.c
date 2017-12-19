@@ -1315,7 +1315,7 @@ static void rtmp_read_ap_wmm_parms_from_file(IN  PRTMP_ADAPTER pAd, PSTRING tmpb
 			{
 				pAd->ApCfg.MBSSID[i].UapsdInfo.bAPSDCapable = \
 										(UCHAR) simple_strtol(macptr, 0, 10);
-				DBGPRINT(RT_DEBUG_ERROR, ("APSDCapable[%d]=%d\n", i,
+				DBGPRINT(RT_DEBUG_TRACE, ("APSDCapable[%d]=%d\n", i,
 						pAd->ApCfg.MBSSID[i].UapsdInfo.bAPSDCapable));
 			}
 	    }
@@ -1330,7 +1330,7 @@ static void rtmp_read_ap_wmm_parms_from_file(IN  PRTMP_ADAPTER pAd, PSTRING tmpb
 			{
 				pAd->ApCfg.MBSSID[i].UapsdInfo.bAPSDCapable =
 							pAd->ApCfg.MBSSID[0].UapsdInfo.bAPSDCapable;
-				DBGPRINT(RT_DEBUG_ERROR, ("APSDCapable[%d]=%d\n", i,
+				DBGPRINT(RT_DEBUG_TRACE, ("APSDCapable[%d]=%d\n", i,
 						pAd->ApCfg.MBSSID[i].UapsdInfo.bAPSDCapable));
 			}
 		}

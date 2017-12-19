@@ -183,7 +183,7 @@ BOOLEAN PeerAssocReqCmmSanity(
                     *pRatesLen = MAX_LEN_OF_SUPPORTED_RATES;
                 }
                 break;
-                
+
             case IE_HT_CAP:
 			if (eid_ptr->Len >= sizeof(HT_CAPABILITY_IE))
 			{
@@ -198,9 +198,9 @@ BOOLEAN PeerAssocReqCmmSanity(
 
 					NdisMoveMemory((PUCHAR)(&extHtCapInfo), (PUCHAR)(&pHtCapability->ExtHtCapInfo), sizeof(EXT_HT_CAP_INFO));
 					*(USHORT *)(&extHtCapInfo) = cpu2le16(*(USHORT *)(&extHtCapInfo));
-					NdisMoveMemory((PUCHAR)(&pHtCapability->ExtHtCapInfo), (PUCHAR)(&extHtCapInfo), sizeof(EXT_HT_CAP_INFO));		
+					NdisMoveMemory((PUCHAR)(&pHtCapability->ExtHtCapInfo), (PUCHAR)(&extHtCapInfo), sizeof(EXT_HT_CAP_INFO));
 				}
-#else				
+#else
 				*(USHORT *)(&pHtCapability->ExtHtCapInfo) = \
 							cpu2le16(*(USHORT *)(&pHtCapability->ExtHtCapInfo));
 #endif /* UNALIGNMENT_SUPPORT */
@@ -213,7 +213,6 @@ BOOLEAN PeerAssocReqCmmSanity(
 			{
 				DBGPRINT(RT_DEBUG_WARN, ("PeerAssocReqSanity - wrong IE_HT_CAP.eid_ptr->Len = %d\n", eid_ptr->Len));
 			}
-				
 		break;
 		case IE_EXT_CAPABILITY:
 			if (eid_ptr->Len >= sizeof(EXT_CAP_INFO_ELEMENT))
@@ -237,7 +236,7 @@ BOOLEAN PeerAssocReqCmmSanity(
 				{
 					switch (eid_ptr->Octet[3])
 					{
-						case 0x33: 
+						case 0x33:
 							if ((eid_ptr->Len-4) == sizeof(HT_CAPABILITY_IE))
 							{
 								NdisMoveMemory(pHtCapability, &eid_ptr->Octet[4], SIZE_HT_CAP_IE);
@@ -249,16 +248,16 @@ BOOLEAN PeerAssocReqCmmSanity(
 
 									NdisMoveMemory((PUCHAR)(&extHtCapInfo), (PUCHAR)(&pHtCapability->ExtHtCapInfo), sizeof(EXT_HT_CAP_INFO));
 									*(USHORT *)(&extHtCapInfo) = cpu2le16(*(USHORT *)(&extHtCapInfo));
-									NdisMoveMemory((PUCHAR)(&pHtCapability->ExtHtCapInfo), (PUCHAR)(&extHtCapInfo), sizeof(EXT_HT_CAP_INFO));		
+									NdisMoveMemory((PUCHAR)(&pHtCapability->ExtHtCapInfo), (PUCHAR)(&extHtCapInfo), sizeof(EXT_HT_CAP_INFO));
 								}
-#else				
+#else
 								*(USHORT *)(&pHtCapability->ExtHtCapInfo) = cpu2le16(*(USHORT *)(&pHtCapability->ExtHtCapInfo));
 #endif /* UNALIGNMENT_SUPPORT */
 
 								*pHtCapabilityLen = SIZE_HT_CAP_IE;
 							}
 							break;
-						
+
 						default:
 							/* ignore other cases */
 							break;
@@ -274,7 +273,7 @@ BOOLEAN PeerAssocReqCmmSanity(
         				*pRalinkIe = 0xf0000000; /* Set to non-zero value (can't set bit0-2) to represent this is Ralink Chip. So at linkup, we will set ralinkchip flag. */
                     break;
                 }
-                
+
                 /* WMM_IE */
                 if (NdisEqualMemory(eid_ptr->Octet, WME_INFO_ELEM, 6) && (eid_ptr->Len == 7))
                 {
@@ -295,20 +294,20 @@ BOOLEAN PeerAssocReqCmmSanity(
 
                 if (pAd->ApCfg.MBSSID[pEntry->apidx].AuthMode < Ndis802_11AuthModeWPA)
                     break;
-                
-                /* 	If this IE did not begins with 00:0x50:0xf2:0x01,  
+
+                /* 	If this IE did not begins with 00:0x50:0xf2:0x01,
                 	it would be proprietary. So we ignore it. */
                 if (!NdisEqualMemory(eid_ptr->Octet, WPA1_OUI, sizeof(WPA1_OUI))
                     && !NdisEqualMemory(&eid_ptr->Octet[2], WPA2_OUI, sizeof(WPA2_OUI)))
                 {
                     DBGPRINT(RT_DEBUG_TRACE, ("Not RSN IE, maybe WMM IE!!!\n"));
-                    break;                          
+                    break;
                 }
-                
+
                 if (/*(eid_ptr->Len <= MAX_LEN_OF_RSNIE) &&*/ (eid_ptr->Len >= MIN_LEN_OF_RSNIE))
                 {
 					hex_dump("Received RSNIE in Assoc-Req", (UCHAR *)eid_ptr, eid_ptr->Len + 2);
-                    
+
 					/* Copy whole RSNIE context */
                     NdisMoveMemory(RSN, eid_ptr, eid_ptr->Len + 2);
 					*pRSNLen=eid_ptr->Len + 2;
@@ -319,7 +318,7 @@ BOOLEAN PeerAssocReqCmmSanity(
                     *pRSNLen=0;
                     DBGPRINT(RT_DEBUG_TRACE, ("PeerAssocReqSanity - missing IE_WPA(%d)\n",eid_ptr->Len));
                     return FALSE;
-                }               
+                }
                 break;
 
 
