@@ -502,7 +502,7 @@ VOID NICInitRT3593RFRegisters(
 	RT30xxWriteRFRegister(pAd, RF_R02, RfReg);
 
 	/* Init RF frequency offset */
-	RTMPAdjustFrequencyOffset(pAd, &pAd->RfFreqOffset);
+	RTMPAdjustFrequencyOffset(pAd, (PUCHAR)&pAd->RfFreqOffset);
 
 	/* Driver should set RF R18 bit6 on before calibration */
 	RT30xxReadRFRegister(pAd, RF_R18, &RfReg);

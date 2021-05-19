@@ -1083,7 +1083,7 @@ static VOID NICInitRT5592RFRegisters(IN PRTMP_ADAPTER pAd)
 	//RT5592FilterCalibration(pAd);
 
 	/* Init RF frequency offset */
-	RTMPAdjustFrequencyOffset(pAd, &pAd->RfFreqOffset);
+	RTMPAdjustFrequencyOffset(pAd, (PUCHAR)&pAd->RfFreqOffset);
 
 	/* Initialize RF R27 register, set RF R27 must be behind RTMPFilterCalibration() */
        if ((pAd->MACVersion & 0xffff) < 0x0211)

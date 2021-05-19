@@ -127,9 +127,13 @@ static inline VOID __RTMP_OS_Init_Timer(
 	IN PVOID data)
 {
 	if (!timer_pending(pTimer)) {
+#if LINUX_VERSION_CODE < KERNEL_VERSION(4,15,0)
+		pTimer->function = function;
 		init_timer(pTimer);
 		pTimer->data = (unsigned long)data;
-		pTimer->function = function;
+#else   
+		timer_setup(pTimer, function, 0);
+#endif
 	}
 }
 
@@ -1175,6 +1179,9 @@ void RtmpOSFileSeek(RTMP_OS_FD osfd,
 
 int RtmpOSFileRead(RTMP_OS_FD osfd,
 		     char *pDataPtr, int readLen) {
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,14,0)
+	return kernel_read(osfd, pDataPtr, readLen, &osfd->f_pos);
+#else
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,9,0)
 	return vfs_read(osfd, pDataPtr, readLen, &osfd->f_pos);
 #else
@@ -1186,10 +1193,14 @@ int RtmpOSFileRead(RTMP_OS_FD osfd,
 		return -1;
 	}
 #endif
+#endif /*LINUX_VERSION_CODE >= KERNEL_VERSION(4,14,0)*/
 }
 
 int RtmpOSFileWrite(RTMP_OS_FD osfd,
 		    char *pDataPtr, int writeLen) {
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(4,14,0)
+	return kernel_write(osfd, pDataPtr, writeLen, &osfd->f_pos);
+#else
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,9,0)
 	return vfs_write(osfd, pDataPtr, writeLen, &osfd->f_pos);
 #else
@@ -1199,6 +1210,7 @@ int RtmpOSFileWrite(RTMP_OS_FD osfd,
 	size_t) writeLen,
 				 &osfd->f_pos);
 #endif
+#endif /*LINUX_VERSION_CODE >= KERNEL_VERSION(4,14,0)*/
 }
 
 static inline void __RtmpOSFSInfoChange(OS_FS_INFO * pOSFSInfo,
@@ -3898,8 +3910,7 @@ VOID RTMP_SetPeriodicTimer(IN NDIS_MINIPORT_TIMER *pTimerOrg,
 VOID RTMP_OS_Init_Timer(IN VOID *pReserved,
 			IN NDIS_MINIPORT_TIMER *pTimerOrg,
 			IN TIMER_FUNCTION function,
-			IN PVOID data,
-			IN LIST_HEADER *pTimerList) {
+			IN PVOID data) {
 	OS_NDIS_MINIPORT_TIMER *pTimer;
 
 	if (RTMP_OS_Alloc_RscOnly(pTimerOrg,
@@ -5532,8 +5543,7 @@ VOID RTMP_OS_Init_Timer(
 					  IN VOID *pReserved,
 					  IN NDIS_MINIPORT_TIMER *pTimerOrg,
 					  IN TIMER_FUNCTION function,
-					  IN PVOID data,
-					  IN LIST_HEADER *pTimerList) {
+					  IN PVOID data) {
 	__RTMP_OS_Init_Timer(pReserved, pTimerOrg, function, data);
 }
 

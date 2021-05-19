@@ -1,9 +1,13 @@
-* git clone https://github.com/maroviher/my_ralink_AP_drv<br>
-* cd my_ralink_AP_drv/raspi<br>
-* # add path to your toolchain to $PATH, (PATH=$PATH:/home/ahmed/raspi_toolchains/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin)<br>
-* # arm-linux-gnueabihf- is a prefix to your cross compiler<br>
-* cards="2870 3070 5370" ; for card in $cards; do ./cross_compile.sh $card arm-linux-gnueabihf- /path/to/linux/source ; done<br>
-* ls -la ../os/linux/*.ko<br>
-<br>
-* # to clean all:<br>
-* make clean ; rm -f ap/.* ; rm -f chips/.* ; rm -f common/.* ; rm -f os/linux/\.* ; rm -f os/linux/*.mod.c ; rm -f os/linux/*.ko ; rm -f rate_ctrl/\.* ; rm -f sta/\.* ; rm -f tools/bin2h
+Access Point Linux kernel driver for old Ralink chipsets. Better connection speed and less CPU utilization than the kernel tree driver. Compiles on modern kernels (tested until 5.8)<br><br>
+
+compile for all supported cards:<br>
+make<br>
+
+compile for a certain chip:<br>
+#5572 3573 3572 2870 5370 3070<br>
+make CHIPSET=2870<br><br>
+
+include/os/rt_linux.h<br>
+#change path to config file (AP_PROFILE_PATH) if you want<br>
+#then copy and edit the config file: cp RTAP.dat /etc/Wireless/RTAP.dat<br>
+
