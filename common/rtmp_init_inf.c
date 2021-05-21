@@ -440,7 +440,7 @@ int rt28xx_init(
 	}
 
 #ifdef DOT11_N_SUPPORT
-	DBGPRINT(RT_DEBUG_OFF, ("MCS Set = %02x %02x %02x %02x %02x\n", pAd->CommonCfg.HtCapability.MCSSet[0],
+	DBGPRINT(RT_DEBUG_TRACE, ("MCS Set = %02x %02x %02x %02x %02x\n", pAd->CommonCfg.HtCapability.MCSSet[0],
            pAd->CommonCfg.HtCapability.MCSSet[1], pAd->CommonCfg.HtCapability.MCSSet[2],
            pAd->CommonCfg.HtCapability.MCSSet[3], pAd->CommonCfg.HtCapability.MCSSet[4]));
 #endif /* DOT11_N_SUPPORT */
@@ -582,7 +582,7 @@ int rt28xx_init(
 #endif /* DOT11_N_SUPPORT */
 
 			APStartUp(pAd);
-			DBGPRINT(RT_DEBUG_OFF, ("Main bssid = %02x:%02x:%02x:%02x:%02x:%02x\n", 
+			DBGPRINT(RT_DEBUG_TRACE, ("Main bssid = %02x:%02x:%02x:%02x:%02x:%02x\n", 
 									PRINT_MAC(pAd->ApCfg.MBSSID[BSS0].Bssid)));
 		}
 #endif /* CONFIG_AP_SUPPORT */
@@ -705,7 +705,7 @@ int rt28xx_init(
 	}
 #endif /* RT3290 */
 
-	DBGPRINT_S(Status, ("<==== rt28xx_init, Status=%x\n", Status));
+	DBGPRINT(RT_DEBUG_TRACE, ("<==== rt28xx_init, Status=%x\n", Status));
 
 	return TRUE;
 

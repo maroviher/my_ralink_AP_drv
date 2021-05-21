@@ -500,7 +500,7 @@ NDIS_STATUS RtmpAsicLoadFirmware(
 	/* firmware is never loaded or the loadable firmware is different with the firmware in the RAM */
 	if (isMCUNeedToLoadFIrmware(pAd) || Equal == FALSE )
 	{
-		DBGPRINT(RT_DEBUG_ERROR, ("NICLoadFirmware: We need to load firmware\n"));	
+		DBGPRINT(RT_DEBUG_TRACE, ("NICLoadFirmware: We need to load firmware\n"));	
 		RTMP_WRITE_FIRMWARE(pAd, pFirmwareImage, FileLength); /* FirmwareRun VndReq 0x1/0x8 --> initDone = 1 */
 	}
 	else {
