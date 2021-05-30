@@ -82,13 +82,13 @@ INT RtmpChipOpsEepromHook(
 		pChipOps->eeinit = eFuse_init;
 		pChipOps->eeread = rtmp_ee_efuse_read16;
 		pChipOps->eewrite = rtmp_ee_efuse_write16;
-		DBGPRINT(RT_DEBUG_OFF, ("NVM is EFUSE\n"));
+		DBGPRINT(RT_DEBUG_TRACE, ("NVM is EFUSE\n"));
 		return 0 ;	
 	}
 	else
 	{
 		pAd->bFroceEEPROMBuffer = FALSE;
-		DBGPRINT(RT_DEBUG_OFF, ("NVM is EEPROM\n"));
+		DBGPRINT(RT_DEBUG_TRACE, ("NVM is EEPROM\n"));
 	}
 #endif /* RTMP_EFUSE_SUPPORT */
 #endif /* RT30xx */
@@ -102,8 +102,8 @@ INT RtmpChipOpsEepromHook(
 			pChipOps->eeinit = NULL;
 			pChipOps->eeread = RTUSBReadEEPROM16;
 			pChipOps->eewrite = RTUSBWriteEEPROM16;
-			DBGPRINT(RT_DEBUG_OFF, ("pChipOps->eeread = RTUSBReadEEPROM16\n"));
-			DBGPRINT(RT_DEBUG_OFF, ("pChipOps->eewrite = RTUSBWriteEEPROM16\n"));
+			DBGPRINT(RT_DEBUG_TRACE, ("pChipOps->eeread = RTUSBReadEEPROM16\n"));
+			DBGPRINT(RT_DEBUG_TRACE, ("pChipOps->eewrite = RTUSBWriteEEPROM16\n"));
 			break;
 #endif /* RTMP_USB_SUPPORT */
 		default:
